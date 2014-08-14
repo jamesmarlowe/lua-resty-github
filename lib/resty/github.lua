@@ -58,7 +58,7 @@ function _M.get_issues(self, state, issue)
         return nil, "message failed"
     end
     
-    return resp.
+    return resp.body
 end
 
 
@@ -92,7 +92,7 @@ function _M.new_issue(self, title, body)
         return nil, "message failed"
     end
     
-    return resp.
+    return resp.body
 end
 
 

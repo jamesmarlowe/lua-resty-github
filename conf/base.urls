@@ -1,0 +1,24 @@
+
+        location = /lua-resty-github/test/ {
+            internal;
+            
+            content_by_lua '
+                local github = require "github"
+                
+                local params = ngx.req.get_query_args()
+                
+                if not params.github_token then
+                    ngx.say("no github token")
+                    ngx.exit(1)
+                end
+                
+                local gh, err = github:new(params.github_token)
+                
+                if err then ngx.say(err) ngx.exit(1) end
+                
+                local ok, err = gh:get_issues("all")
+                
+                if err then ngx.say(err) ngx.exit(1) end
+
+            ';
+        }

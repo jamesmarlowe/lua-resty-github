@@ -77,7 +77,7 @@ function _M.new_issue(self, title, body)
     end
     
     local parameter_specification = {
-                                     title = title
+                                     title = title,
                                      body  = body
                                     }
     

@@ -43,7 +43,7 @@ function _M.get_issues(self, state, issue)
     end
     
     local parameter_specification = {
-                                     state = state
+                                     state = state,
                                      issue = issue
                                     }
     

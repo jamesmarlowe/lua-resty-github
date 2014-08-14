@@ -1,0 +1,15 @@
+
+        location /github/v3/ {
+            internal;
+            resolver 8.8.8.8;
+            set_unescape_uri $api_method $arg_api_method;
+
+            proxy_pass_request_headers off;
+            more_clear_headers 'Host';
+            more_clear_headers 'Connection';
+            more_clear_headers 'Content-Length';
+            more_clear_headers 'User-Agent';
+            more_clear_headers 'Accept';
+
+            proxy_pass https://api.github.com:443$api_method;
+        }

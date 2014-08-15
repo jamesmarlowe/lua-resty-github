@@ -3,27 +3,131 @@ Name
 
 lua-resty-github - Lua library for using the github api
 
+Table of Contents
+=================
+
+* [Name](#name)
+* [Status](#status)
+* [Description](#description)
+* [Synopsis](#synopsis)
+* [Methods](#methods)
+    * [new](#new)
+    * [get_issues](#get_issues)
+    * [new_issue](#new_issue)
+    * [safe_create_issue](#safe_create_issue)
+* [Limitations](#limitations)
+* [Installation](#installation)
+* [TODO](#todo)
+* [Author](#author)
+* [Copyright and License](#copyright-and-license)
+* [See Also](#see-also)
 
 Status
 ======
 
-This library is still under early development and not functional.
+This library is still under early development and considered experimental.
 
 Description
 ===========
 
-This Lua library is a github utility for the ngx_lua nginx module:
+This Lua library is a github utility for the ngx_lua nginx module.
+
+One potential use case for this is automatically filing issues for you when errors occur in your code base.
+
+Synopsis
+========
+
+```
+    lua_package_path "/path/to/lua-resty-github/lib/?.lua;;";
+    
+    server {
+        location /test {
+            content_by_lua '
+                local github = require "resty.github"
+                
+                local gh, err = github:new("github_token")
+                
+                local issue_url, err = gh:safe_create_issue("github_owner", "github_repo", "issue_title", "issue_body")
+                
+                ngx.say("Issue created at: "..issue_url)
+            ';
+        }
+        
+        include .../lua-resty-github/conf/*.urls;
+    }
+```
+
+[Back to TOC](#table-of-contents)
+
+Methods
+=======
+
+All of the commands return either something that evaluates to true on success, or `nil` and an error message on failure.
+
+new
+---
+`syntax: gh, err = github:new("github_token")`
+
+Creates an github auth object. In case of failures, returns `nil` and a string describing the error. You can create a token at https://github.com/settings/tokens/new
+
+[Back to TOC](#table-of-contents)
+
+get_issues
+----------
+`syntax: issues, err = gh:get_issues(owner, repo, state, issue)`
+
+`syntax: issues, err = gh:get_issues("jamesmarlowe", "lua-resty-github", "open")`
+
+Gets issues for the specified repository. In case of failures, returns `nil` and a string describing the error.
+
+[Back to TOC](#table-of-contents)
+
+new_issue
+---------
+`syntax: issue, err = gh:new_issue(owner, repo, title, body)`
+
+`syntax: issue, err = gh:new_issue("jamesmarlowe", "lua-resty-github", "test-issue", "issue body")`
+
+Creates and returns an issue in the specified repository. In case of failures, returns `nil` and a string describing the error.
+
+[Back to TOC](#table-of-contents)
+
+safe_create_issue
+-----------------
+`syntax: issue, err = gh:safe_create_issue(owner, repo, title, body)`
+
+`syntax: issue, err = gh:safe_create_issue("jamesmarlowe", "lua-resty-github", "test-issue", "issue body")`
+
+Finds or creates and returns an issue in the specified repository. In case of failures, returns `nil` and a string describing the error.
+
+[Back to TOC](#table-of-contents)
+
+Limitations
+===========
+
+* Only handles issues right now
+* Can't handle 2 factor auth
+
+[Back to TOC](#table-of-contents)
 
 Installation
 ============
 
-If you are using your own nginx + ngx_lua build, then you need to configure the lua_package_path directive to add the path of your lua-resty-github source tree to ngx_lua's LUA_PATH search path, as in
+If you are using your own nginx + ngx_lua build, then you need to configure the lua_package_path directive to add the path of your lua-resty-github source tree to ngx_lua's LUA_PATH search path, and include the urls, as in
 
 ```nginx
     # nginx.conf
     http {
+    
         lua_package_path "/path/to/lua-resty-github/lib/?.lua;;";
+        
         ...
+        
+        server {
+        
+            include .../lua-resty-github/conf/*.urls;
+            
+        }
     }
 ```
 
@@ -35,33 +139,8 @@ enough permission to read the `.lua` file.
 TODO
 ====
 
-[Back to TOC](#table-of-contents)
-
-Community
-=========
-
-[Back to TOC](#table-of-contents)
-
-English Mailing List
---------------------
-
-The [openresty-en](https://groups.google.com/group/openresty-en) mailing list is for English speakers.
-
-[Back to TOC](#table-of-contents)
-
-Chinese Mailing List
---------------------
-
-The [openresty](https://groups.google.com/group/openresty) mailing list is for Chinese speakers.
-
-[Back to TOC](#table-of-contents)
-
-Bugs and Patches
-================
-
-Please report bugs or submit patches by
-
-1. creating a ticket on the [GitHub Issue Tracker](http://github.com/jamesmarlowe/lua-resty-hipchat/issues),
+* Add support for the rest of the api https://developer.github.com/v3/
+* Handle 2 factor auth
 
 [Back to TOC](#table-of-contents)
 

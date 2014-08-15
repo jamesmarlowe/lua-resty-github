@@ -11,6 +11,7 @@
             more_clear_headers 'Accept';
             
             proxy_set_header authentication $arg_authentication;
+            proxy_set_header User-Agent curl/7.35.0;
 
             proxy_pass https://api.github.com:443$api_method;
         }

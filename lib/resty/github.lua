@@ -6,6 +6,27 @@ local github_proxy_url = "/github/v3/"
 local issue_url = "/repos/${owner}/${repo}/issues/${issue}"
 
 
+-- obtain a copy of enc() here: http://lua-users.org/wiki/BaseSixtyFour
+function enc(data)
+    -- character table string
+    local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+    return ((data:gsub('.', function(x) 
+        local r,b='',x:byte()
+        for i=8,1,-1 do
+            r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0')
+        end
+        return r;
+    end)..'0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
+        if (#x < 6) then return '' end
+        local c=0
+        for i=1,6 do
+            c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0)
+        end
+        return b:sub(c+1,c+1)
+    end)..({ '', '==', '=' })[#data%3+1])
+end
+
+
 -- a string replacement function
 function macro_replace(s,tab)
     return (s:gsub('($%b{})', function(w)
@@ -51,7 +72,8 @@ function _M.get_issues(self, state, issue)
               github_proxy_url,
             { method = ngx.HTTP_GET,
               body = cjson.encode(parameter_specification),
-              args = {api_method=issue_url}}
+              args = {api_method=issue_url,
+                      authentication = enc(access_token..":x-oauth-basic")}}
     )
     
     if resp.status ~= 200 then
@@ -85,7 +107,8 @@ function _M.new_issue(self, title, body)
               github_proxy_url,
             { method = ngx.HTTP_POST,
               body = cjson.encode(parameter_specification),
-              args = {api_method=issue_url}}
+              args = {api_method=issue_url,
+                      authentication = enc(access_token..":x-oauth-basic")}}
     )
     
     if resp.status ~= 200 then

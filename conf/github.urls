@@ -10,6 +10,8 @@
             more_clear_headers 'Content-Length';
             more_clear_headers 'User-Agent';
             more_clear_headers 'Accept';
+            
+            proxy_set_header authentication $arg_authentication;
 
             proxy_pass https://api.github.com:443$api_method;
         }

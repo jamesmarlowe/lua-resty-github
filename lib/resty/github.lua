@@ -139,7 +139,7 @@ function _M.new_issue(self, owner, repo, title, body)
                       authorization = "token "..access_token}}
     )
     
-    if resp.status ~= 200 then
+    if resp.status ~= 201 then
         return nil, resp.status.." : "..resp.body
     end
     

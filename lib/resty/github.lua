@@ -30,7 +30,7 @@ end
 -- a string replacement function
 function macro_replace(s,tab)
     return (s:gsub('($%b{})', function(w)
-        return r_args[w:sub(3, -2)] and tab[w:sub(3, -2)] or w
+        return tab[w:sub(3, -2)] or w
     end))
 end
 
@@ -57,22 +57,36 @@ function _M.new(self, access_token )
 end
 
 
-function _M.get_issues(self, state, issue)
+function _M.get_issues(self, owner, repo, state, issue)
     local access_token = self.access_token
     if not access_token then
         return nil, "not initialized"
+    end
+    
+    if not owner then
+        return nil, "no owner"
+    end
+    
+    if not repo then
+        return nil, "no repo"
     end
     
     local parameter_specification = {
                                      state = state,
                                      issue = issue
                                     }
+                                    
+    local repo_specification = {
+                                owner = owner,
+                                repo = repo,
+                                issue = ""
+                               }
     
     resp = ngx.location.capture(
               github_proxy_url,
             { method = ngx.HTTP_GET,
               body = cjson.encode(parameter_specification),
-              args = {api_method=issue_url,
+              args = {api_method = macro_replace(issue_url,repo_specification),
                       authentication = enc(access_token..":x-oauth-basic")}}
     )
     
@@ -84,7 +98,7 @@ function _M.get_issues(self, state, issue)
 end
 
 
-function _M.new_issue(self, title, body)
+function _M.new_issue(self, owner, repo, title, body)
     local access_token = self.access_token
     if not access_token then
         return nil, "not initialized"
@@ -102,12 +116,18 @@ function _M.new_issue(self, title, body)
                                      title = title,
                                      body  = body
                                     }
+                                    
+    local repo_specification = {
+                                owner = owner,
+                                repo = repo,
+                                issue = ""
+                               }
     
     resp = ngx.location.capture(
               github_proxy_url,
             { method = ngx.HTTP_POST,
               body = cjson.encode(parameter_specification),
-              args = {api_method=issue_url,
+              args = {api_method = macro_replace(issue_url,repo_specification),
                       authentication = enc(access_token..":x-oauth-basic")}}
     )
     

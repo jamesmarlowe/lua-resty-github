@@ -3,7 +3,7 @@
 
 local cjson = require "cjson"
 local github_proxy_url = "/github/v3/"
-local issue_url = "/repos/${owner}/${repo}/issues/${issue}"
+local issue_url = "/repos/${owner}/${repo}/issues${issue}"
 
 
 -- obtain a copy of enc() here: http://lua-users.org/wiki/BaseSixtyFour
@@ -45,6 +45,11 @@ local _M = new_tab(0, 155)
 _M._VERSION = '0.01'
 
 
+local valid_state_values = {
+    open = "open", closed = "closed", all = "all"
+}
+
+
 local mt = { __index = _M }
 
 
@@ -71,15 +76,18 @@ function _M.get_issues(self, owner, repo, state, issue)
         return nil, "no repo"
     end
     
+    local state = state and 
+                  valid_state_values[state]
+                  or "open"
+    
     local parameter_specification = {
-                                     state = state,
-                                     issue = issue
+                                     state = state
                                     }
                                     
     local repo_specification = {
                                 owner = owner,
                                 repo = repo,
-                                issue = ""
+                                issue = issue and "/"..issue or ""
                                }
     
     resp = ngx.location.capture(

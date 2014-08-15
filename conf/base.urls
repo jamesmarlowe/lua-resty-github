@@ -26,11 +26,11 @@
                 
                 if err then ngx.say(err) ngx.exit(ngx.OK) end
                 
-                local issues, err = gh:get_issues(params.github_owner, params.github_repo)
+                local issue, err = gh:safe_create_issue(params.github_owner, params.github_repo, "test-issue", "this is only a test. body")
                 
                 if err then ngx.say(err) ngx.exit(ngx.OK) end
                 
-                ngx.say(issues)
+                ngx.say("Issue created at: "..issue)
 
             ';
         }

@@ -102,7 +102,7 @@ function _M.get_issues(self, owner, repo, state, issue)
         return nil, resp.status.." : "..resp.body
     end
     
-    return resp.body
+    return cjson.decode(resp.body)
 end
 
 
@@ -136,14 +136,29 @@ function _M.new_issue(self, owner, repo, title, body)
             { method = ngx.HTTP_POST,
               body = cjson.encode(parameter_specification),
               args = {api_method = macro_replace(issue_url,repo_specification),
-                      authorization = enc(access_token..":x-oauth-basic")}}
+                      authorization = "token "..access_token}}
     )
     
     if resp.status ~= 200 then
         return nil, resp.status.." : "..resp.body
     end
     
-    return resp.body
+    return cjson.decode(resp.body)
+end
+
+
+function _M.safe_create_issue(self, owner, repo, title, body)
+    local issues = self:get_issues(owner, repo)
+    
+    for k, v in ipairs(issues) do
+        if title == v.title then 
+            return v.html_url
+        end
+    end
+    
+    issue, err = self:new_issue(owner, repo, title, body)
+    if err then return nil, err else return issue.html_url end
+    
 end
 
 

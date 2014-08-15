@@ -77,7 +77,7 @@ function _M.get_issues(self, state, issue)
     )
     
     if resp.status ~= 200 then
-        return nil, "message failed"
+        return nil, resp.status.." : "..resp.body
     end
     
     return resp.body
@@ -112,7 +112,7 @@ function _M.new_issue(self, title, body)
     )
     
     if resp.status ~= 200 then
-        return nil, "message failed"
+        return nil, resp.status.." : "..resp.body
     end
     
     return resp.body

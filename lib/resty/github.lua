@@ -95,7 +95,7 @@ function _M.get_issues(self, owner, repo, state, issue)
             { method = ngx.HTTP_GET,
               body = cjson.encode(parameter_specification),
               args = {api_method = macro_replace(issue_url,repo_specification),
-                      authentication = "token "..access_token")}}
+                      authentication = "token "..access_token)}}
     )
     
     if resp.status ~= 200 then

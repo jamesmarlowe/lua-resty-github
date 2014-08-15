@@ -13,12 +13,12 @@
                 end
                 
                 if not params.github_owner then
-                    ngx.say("no github token")
+                    ngx.say("no github owner")
                     ngx.exit(ngx.OK)
                 end
                 
                 if not params.github_repo then
-                    ngx.say("no github token")
+                    ngx.say("no github repo")
                     ngx.exit(ngx.OK)
                 end
                 
@@ -26,7 +26,7 @@
                 
                 if err then ngx.say(err) ngx.exit(ngx.OK) end
                 
-                local ok, err = gh:get_issues(params.github_owner, params.github_repo, "all")
+                local ok, err = gh:get_issues(params.github_owner, params.github_repo)
                 
                 if err then ngx.say(err) ngx.exit(ngx.OK) end
 

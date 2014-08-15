@@ -8,7 +8,6 @@
             more_clear_headers 'Host';
             more_clear_headers 'Connection';
             more_clear_headers 'Content-Length';
-            more_clear_headers 'User-Agent';
             more_clear_headers 'Accept';
             
             proxy_set_header authentication $arg_authentication;

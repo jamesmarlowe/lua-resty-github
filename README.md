@@ -134,6 +134,22 @@ If you are using your own nginx + ngx_lua build, then you need to configure the 
 Ensure that the system account running your Nginx ''worker'' proceses have
 enough permission to read the `.lua` file.
 
+Docker
+------
+I've also made a docker image to make setup of the nginx environment easier. View details here: https://registry.hub.docker.com/u/jamesmarlowe/lua-resty-github/
+```
+# install docker according to http://docs.docker.com/installation/
+
+# pull image
+sudo docker pull jamesmarlowe/lua-resty-github
+
+# make sure it is there
+sudo docker images
+
+# run the image
+sudo docker run -t -i jamesmarlowe/lua-resty-github
+```
+
 [Back to TOC](#table-of-contents)
 
 TODO

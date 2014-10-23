@@ -1,6 +1,6 @@
 FROM       ubuntu:latest
 
-MAINTAINER James Marlowe <jameskmarlowe@gmail.com>
+MAINTAINER James Marlowe jameskmarlowe@gmail.com
 
 # update machine
 RUN apt-get -qq update
